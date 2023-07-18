@@ -35,22 +35,18 @@ mtlLoader.load('/Blinky.mtl', (materials) => {
     objLoader.load('/Blinky.obj', (ghost) => {
         const ghostMesh = new THREE.Mesh(ghost.children[0].geometry, ghost.children[0].material)
 
-        ghostMesh.position.set(0, 5, 0)
         ghostMesh.scale.set(10, 10, 10)
         ghostMesh.rotation.x = Math.PI / 2
 
         const ghostCopy = ghostMesh.clone()
-        ghostCopy.position.set(0, 7, 0)
         ghostCopy.scale.set(10, 10, 10)
         ghostCopy.rotation.x = Math.PI / 2
 
         const ghostCopy2 = ghostMesh.clone()
-        ghostCopy2.position.set(0, 7, 0)
         ghostCopy2.scale.set(10, 10, 10)
         ghostCopy2.rotation.x = Math.PI / 2
 
         const ghostCopy3 = ghostMesh.clone()
-        ghostCopy2.position.set(0, 7, 0)
         ghostCopy2.scale.set(10, 10, 10)
         ghostCopy2.rotation.x = Math.PI / 2
 
