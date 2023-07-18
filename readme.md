@@ -4,6 +4,8 @@ rodar esses comandos
 ``` bash
 cd caminho_da_pasta
 
+rm node_modules/ -rf
+
 # instala dependencias
 npm install
 
