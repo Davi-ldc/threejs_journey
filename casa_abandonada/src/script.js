@@ -83,7 +83,7 @@ function spawnGhost() {
   })
 }
 function moveGhostTowardsWalls(ghost) {
-  const speed = 0.000099 // Velocidade do movimento
+  const speed = 0.000069 // Velocidade do movimento
 
   const direction = new THREE.Vector3() // Vetor de direção
   direction.subVectors(walls.position, ghost.position).normalize() // Subtrai as posições e normaliza o vetor
