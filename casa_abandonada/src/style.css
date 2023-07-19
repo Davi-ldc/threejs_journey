@@ -1,19 +1,79 @@
-*
-{
+* {
     margin: 0;
     padding: 0;
 }
 
 html,
-body
-{
+body {
     overflow: hidden;
+    background: url('vasco.png')
 }
 
-.webgl
-{
+.webgl {
     position: fixed;
     top: 0;
     left: 0;
     outline: none;
+}
+
+.start-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    font-family: Arial, sans-serif;
+    color: white;
+    cursor: pointer;
+}
+
+.game-over-screen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+.game-over-screen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    animation: moveBackground 10s infinite linear;
+}
+
+.game-over-screen h1 {
+    font-size: 36px;
+    color: rgb(255, 0, 0);
+    margin-bottom: 20px;
+}
+
+.game-over-screen button {
+    font-size: 24px;
+    padding: 10px 20px;
+}
+
+.game-over-screen img {
+    width: auto;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.game-over-screen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-family: Arial, sans-serif;
+    animation: bounce 1s infinite alternate;
 }
