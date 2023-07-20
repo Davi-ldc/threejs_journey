@@ -96,6 +96,15 @@ const generateG = ()=>{
           x = cos(BrenchAngle + angulodespin) * raio 
           z = sen(BrenchAngle + angulodespin) * raio 
 
+
+          Para dar o efeito de "gordura" nos braços da galaxia vamos adicionar um valor random a x y e z que pode ir de 0.5 a -0.5 
+          (por que ai as particulas vao pra cima e para baixo). Para deixar mais legal ainda, vamos tentar fazer com que apenas algumas
+          particulas saiam da linha que forma o shape da galaxia ( por que se todas sairem essa linha some e ela perde o shape definido)
+          já que meth.rendom retorna valores menores que 1 e maiores que 0 então podemos usar math.pow para que se o numero for pequeno como
+          0.1 a adição a posição dele seja baixa o mantendo na linha, dessa forma apenas se moveram muito particulas com random() proximos de 1
+          (claro depende do valor do numero que eleva math.random se ele for alto todas as particulas ficaram muito proximas da linha e se for baixo elas 
+          se distanciarão 
+
     
           
          */
