@@ -141,10 +141,9 @@ const tick = () =>
         let i3 = i * 3
 
         const x = particlesGeometry.attributes.position.array[i3]
-        particlesGeometry.attributes.position.array[i3 + 1] = Math.sin(elapsedTime + x)
+        particlesGeometry.attributes.position.array[i3 + 1] = Math.sin(elapsedTime + x)//x é pra dar o efeito de onda, já que quando mais pra direta maior o valor d x. ai agnt add elapsed time pra dar o efeito de animação
     }
     particlesGeometry.attributes.position.needsUpdate = true
-
 
 
 
