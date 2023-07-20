@@ -57,25 +57,48 @@ const generateG = ()=>{
     //geometria
     for (let i = 0; i<parametros.count; i++){
         const i3 = i * 3
-        //para i = 0 i3 é x, i3+1 é y e i3 + 2 = z 
-        //para i = 1 i3(3) é x mais se fosse i sem multiplicar por 3 seria y do primeiro vertice
+        //para i = 1 geometryarray[i] é o equivalente a o y da particula anterior a ela, por isso multiplicamos por 3
         
         
         const radius = Math.random() * parametros.radios
         const branchAngle = (i % parametros.divisao) / parametros.divisao * Math.PI * 2
-        //calcula um angulo com o resto da divisão de i por parametros.divisao 
-        const spinAngle = radius * parametros.spin//quando vc aumenta o raio o tamnho aumenta por causa do spin
+
+        const spinAngle = radius * parametros.spin
         
         const randomX = Math.pow(Math.random(), parametros.randompower) * (Math.random() <0.5? 1:-1)
         const randomY = Math.pow(Math.random(), parametros.randompower) * (Math.random() <0.5? 1:-1)
         const randomZ = Math.pow(Math.random(), parametros.randompower) * (Math.random() <0.5? 1:-1)
-        //                                                                   se menor q 0.5 então 1 se n -1
-        //a n ser q o numero seja 1 ou 0, quanto elevamos random a x  o numero diminue
+        
+        
         
         
         geometryarray[i3    ] = Math.cos(branchAngle+spinAngle) * radius + randomX
         geometryarray[i3 + 1] = randomY
         geometryarray[i3 + 2] = Math.sin(branchAngle+spinAngle) * radius + randomZ
+
+         /* 
+         BrenchAngle é o angulo onde as esferas vão ser posicionadas, vamos pensar numa 
+         array com todos os valores de i, o resto da divisão de valores de i pelo numero de divisões vai ser algo entre 0 e  numero de divisões -1
+         pegue esse exemplo:
+                     Valores de i: 1,2,3,4,5,6,7,8,9
+         i & 3(numero de exemplo): 1,2,0,1,2,0,1,2,0
+         agora vamos dividir pelo numero de exemplo para padronizar os  numeros, teremos algo como:
+         0.33, 0.66, 0, 0.33 ...
+         e ai multiplicamos por 2pi pra converter pra radianos
+
+         com isso basta fazer posição z = sen(BrenchAngle)
+         e posição x = cos(BrenchAngle) que você tera um triagululo. uma particula no algulo 0, outra no (0.33 * 2pi) e outra no (0.66 * 2pi)
+         porém todas as particulas ficam nas mesmas 3 posições por isso vamos multiplicalas por um numero aleatorio entre 0 e o raio fornecido 
+         pelo usuario formando 3 retas saindo do centro ja que como são 100000 particulas elas vão cair em quase toda possibilidade possivel preenchendo o raio.
+         mais pra formar o formato que queremos as particulas que estão no final da reta tem que girar.
+         para isso basta criar uma varivel que multiplique o raio por um angulo de spin, enquanto maior o raio mais vai girar. 
+         por isso adicionamos essa varivel ao sin e cos. fica assim: 
+          x = cos(BrenchAngle + angulodespin) * raio 
+          z = sen(BrenchAngle + angulodespin) * raio 
+
+    
+          
+         */
 
         // cor 
         const mixedColor = colorInside.clone()
