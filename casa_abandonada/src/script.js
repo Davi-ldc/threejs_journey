@@ -34,6 +34,7 @@ const scene = new THREE.Scene()
 
 const ghosts = []
 const ghostSpawnRadius = 20//tamnho do circulo q eles vão nascer
+const maxGhosts = 10 //numero maximo de fantasmas 
 
 function loadGhostModel() {
   return new Promise((resolve, reject) => {
@@ -63,6 +64,9 @@ function createGhost(originalGhost) {
 }
 
 function spawnGhost() {
+  if (ghosts.length >= maxGhosts) {
+    return // Se já houver 10 fantasmas, não cria mais
+  }
   loadGhostModel().then((ghostMesh) => {
       const ghost = createGhost(ghostMesh)
 
@@ -759,6 +763,8 @@ function updateLasers() {
         // Remover o laser da cena se sair dos limites
         const maxDistance = 100 // Distância máxima que o laser pode percorrer
         if (laser.position.distanceTo(camera.position) > maxDistance) {
+            laser.geometry.dispose();
+            laser.material.dispose();
             scene.remove(laser)
             lasers.splice(index, 1)
         }
