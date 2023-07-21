@@ -34,6 +34,7 @@ const scene = new THREE.Scene()
 
 const ghosts = []
 const ghostSpawnRadius = 20//tamnho do circulo q eles vão nascer
+const maxGhosts = 10 //numero maximo de fantasmas 
 
 function loadGhostModel() {
   return new Promise((resolve, reject) => {
@@ -63,6 +64,9 @@ function createGhost(originalGhost) {
 }
 
 function spawnGhost() {
+  if (ghosts.length >= maxGhosts) {
+    return // Se já houver 10 fantasmas, não cria mais
+  }
   loadGhostModel().then((ghostMesh) => {
       const ghost = createGhost(ghostMesh)
 
