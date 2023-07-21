@@ -763,6 +763,8 @@ function updateLasers() {
         // Remover o laser da cena se sair dos limites
         const maxDistance = 100 // Distância máxima que o laser pode percorrer
         if (laser.position.distanceTo(camera.position) > maxDistance) {
+            laser.geometry.dispose();
+            laser.material.dispose();
             scene.remove(laser)
             lasers.splice(index, 1)
         }
