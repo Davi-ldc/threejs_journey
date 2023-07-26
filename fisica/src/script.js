@@ -5,11 +5,26 @@ import CANNON, { Vec3 } from 'cannon'
 
 THREE.ColorManagement.enabled = false
 
+const som = new Audio('/sounds/hit.mp3')
+const tocaSom = (força)=>{//força é pq se for uma mini colisão n vai ter som 
+    if (força.contact.getImpactVelocityAlongNormal()> 1.5){
+        som.volume = Math.random()
+        som.currentTime =0
+        som.play()
+}
+}
 /**
  * Debug
  */
 const gui = new dat.GUI()
-
+const objct = {}
+objct.creatShere = () => {
+    creatShere(Math.random(), {
+        x:(Math.random()-0.5) *3,
+        y: Math.random()*10,
+        z: (Math.random()-0.5) * 3
+     })
+}
 /**
  * Base
  */
@@ -40,12 +55,13 @@ const environmentMapTexture = cubeTextureLoader.load([
 
 const word = new CANNON.World()
 word.gravity.set(0, - 9.82, 0)
-
+word.broadphase = new CANNON.SAPBroadphase(word)//algoritimo de colisão
+word.allowSleep = true //se um objeto ta parado agnt n vai testar se ele esta colidindo com alguem
 // const plastico = new CANNON.Material('plastico')//plastico é o nome
 // const concreto = new CANNON.Material('concreto')
 const mpadrao = new CANNON.Material('mpadrao')
 
-const concretePlasticContactMaterial = new CANNON.ContactMaterial(
+const Defautmaterial = new CANNON.ContactMaterial(
     mpadrao,
     mpadrao,
     {
@@ -53,7 +69,7 @@ const concretePlasticContactMaterial = new CANNON.ContactMaterial(
         restitution: 0.9
     }
 )
-word.addContactMaterial(concretePlasticContactMaterial)
+word.addContactMaterial(Defautmaterial)
 word.defaultContactMaterial= mpadrao
 
 /**
@@ -146,9 +162,106 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
+
+const geometry = new THREE.SphereGeometry(1, 20, 20)
+const material = new THREE.MeshStandardMaterial({
+    metalness: 0.3,
+    roughness: 0.4,
+    envMap: environmentMapTexture,
+    envMapIntensity: 0.5
+})
+
+
+
+const objetctoupdate = []
 const creatShere = (raio, posição) =>{
-    const mesh = new THREE.Mesh
+    const mesh = new THREE.Mesh(
+        geometry, material
+    )
+    mesh.scale.set(raio,raio,raio)
+    mesh.castShadow = true
+    mesh.position.copy(posição)
+    scene.add(mesh)
+
+    const shape = new CANNON.Sphere(raio)
+
+    const body = new CANNON.Body({
+        mass: 1,
+        position: new CANNON.Vec3(0, 3, 0),
+        shape: shape,
+        material: Defautmaterial
+    })
+    body.position.copy(posição)
+    body.addEventListener('collide', tocaSom)
+    word.addBody(body)
+    objetctoupdate.push({mesh: mesh, body: body})
 }
+creatShere(0.5,{x:0,y:3,z:0})
+
+
+// Create box
+const boxGeometry = new THREE.BoxGeometry(1, 1, 1)
+const boxMaterial = new THREE.MeshStandardMaterial({
+    metalness: 0.3,
+    roughness: 0.4,
+    envMap: environmentMapTexture,
+    envMapIntensity: 0.5
+})
+const createBox = (width, height, depth, position) =>
+{
+    const mesh = new THREE.Mesh(boxGeometry, boxMaterial)
+    mesh.scale.set(width, height, depth)
+    mesh.castShadow = true
+    mesh.position.copy(position)
+    scene.add(mesh)
+
+    const shape = new CANNON.Box(new CANNON.Vec3(width * 0.5, height * 0.5, depth * 0.5))
+
+    const body = new CANNON.Body({
+        mass: 1,
+        position: new CANNON.Vec3(0, 3, 0),
+        shape: shape,
+        material: Defautmaterial
+    })
+    body.position.copy(position)
+    body.addEventListener('collide', tocaSom)
+
+    word.addBody(body)
+
+    objetctoupdate.push({ mesh, body })
+}
+
+createBox(1, 1.5, 2, { x: 0, y: 3, z: 0 })
+
+objct.createBox = () =>
+{
+    createBox(
+        Math.random(),
+        Math.random(),
+        Math.random(),
+        {
+            x: (Math.random() - 0.5) * 3,
+            y: 3,
+            z: (Math.random() - 0.5) * 3
+        }
+    )
+}
+
+objct.reset = () =>
+{
+    for(const object of objetctoupdate)
+    {
+        object.body.removeEventListener('collide', tocaSom)
+        word.removeBody(object.body)
+
+        scene.remove(object.mesh)
+    }
+}
+gui.add(objct, 'reset')
+gui.add(objct, 'createBox')
+gui.add(objct, 'creatShere')
+
+
 /**
  * Animate
  */
@@ -164,6 +277,10 @@ const tick = () =>
     
     word.step(1/60,delta,3)
     //60 FPS, delta time, e quanto steps ele pode fazer se ficar atrazado 
+    for (const object of objetctoupdate){
+        object.mesh.position.copy(object.body.position)
+        object.mesh.quaternion.copy(object.body.quaternion)
+    }
 
     // Update controls
     controls.update()
