@@ -1,10 +1,16 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'lil-gui'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 THREE.ColorManagement.enabled = false
 
-
+let gltf = null
+const loader = new GLTFLoader()
+loader.load('/models/Duck/glTF-Binary/Duck.glb',(_gltf)=>{
+    gltf = _gltf.scene
+    scene.add(_gltf.scene)
+})
 /**
  * Base
  */
@@ -72,13 +78,39 @@ const sizes = {
 }
 
 /**
+ * light
+ */
+const ambientLight = new THREE.AmbientLight('#ffffff',1)
+scene.add(ambientLight)
+/**
  * mouse
  */
 let mouse = new THREE.Vector2()
 
-window.addEventListener('mousemove', (_event) =>{//valores vão de -1 a 1 
-    mouse.x = _event.clientX/sizes.height *2 -1
-    mouse.y = _event.clientY/sizes.width*2 -1
+window.addEventListener('mousemove', (event) =>{//valores vão de -1 a 1 
+    mouse.x = event.clientX / sizes.width * 2 - 1
+    mouse.y = - (event.clientY / sizes.height) * 2 + 1
+})
+
+window.addEventListener('click', () =>
+{
+    if(currentIntersect)
+    {
+        switch(currentIntersect.object)
+        {
+            case object1:
+                console.log('click on object 1')
+                break
+
+            case object2:
+                console.log('click on object 2')
+                break
+
+            case object3:
+                console.log('click on object 3')
+                break
+        }
+    }
 })
 
 
@@ -123,6 +155,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
  * Animate
  */
 const clock = new THREE.Clock()
+let currentIntersect = null
 
 const tick = () =>
 {
@@ -136,20 +169,54 @@ const tick = () =>
     object2.position.y=Math.sin(elapsedTime+2)*1.5
     object3.position.y=Math.sin(elapsedTime+3)*1.5
 
+    raycaster.setFromCamera(mouse, camera)
+    const objectToTest = [object1, object2, object3]
+
+
+
     // const origen = new THREE.Vector3(-3,0,0)
     // const raydirection = new THREE.Vector3(1,0,0)
     // raydirection.normalize()
     // raycaster.set(origen, raydirection)
 
-    // const objectToTest = [object1, object2, object3]
-    // const intersecs = raycaster.intersectObjects(objectToTest)
+    const intersecs = raycaster.intersectObjects(objectToTest)
+    if (gltf){
+        const ModelIntersec = raycaster.intersectObject(gltf)
+        if (ModelIntersec.length){
+            gltf.scale.set(1.2,1.2,1.2)
+        }
+        else{
+            gltf.scale.set(1,1,1)
+        }
+    }
 
-    // for (const obj of objectToTest){
-    //     obj.material.color.set('#ff0000')
-    // }
-    // for (const objetoquetoconalinha of intersecs){
-    //     objetoquetoconalinha.object.material.color.set('#0000ff')
-    // }
+
+    for (const obj of objectToTest){
+        obj.material.color.set('#ff0000')
+    }
+    for (const objetoquetoconalinha of intersecs){
+        objetoquetoconalinha.object.material.color.set('#0000ff')
+    }
+
+    if(intersecs.length)
+    {
+        if(!currentIntersect)
+        {
+            console.log('mouse enter')
+        }
+
+        currentIntersect = intersecs[0]
+    }
+    else
+    {
+        if(currentIntersect)
+        {
+            console.log('mouse leave')
+        }
+        
+        currentIntersect = null
+    }
+
 
     
 
