@@ -73,16 +73,30 @@ rgbeLoader.load('/environmentMaps/0/2k.hdr', (environmentMap) =>
  * Models
  */
 // Helmet
+// gltfLoader.load(
+//     '/models/FlightHelmet/glTF/FlightHelmet.gltf',
+//     (gltf) =>
+//     {
+//         gltf.scene.scale.set(10, 10, 10)
+//         scene.add(gltf.scene)
+
+//         updateAllMaterials()
+//     }
+// )
+
 gltfLoader.load(
-    '/models/FlightHelmet/glTF/FlightHelmet.gltf',
+    '/models/hamburger.glb',
     (gltf) =>
     {
-        gltf.scene.scale.set(10, 10, 10)
+        gltf.scene.scale.set(0.4, 0.4, 0.4)
+        gltf.scene.position.set(0, 2.5, 0)
         scene.add(gltf.scene)
 
         updateAllMaterials()
     }
 )
+
+
 
 //floor
 const floor = new THREE.Mesh(
@@ -126,6 +140,8 @@ directionalLight.target.updateWorldMatrix()//pra ele olhar pra cima
 directionalLight.shadow.camera.far = 15//ta indo muito longe, padrão é 2k mais a cena tem 15
 directionalLight.shadow.mapSize.set(4096,4096)//enquanto maior maior a qualidade da sombra
 
+directionalLight.shadow.normalBias = 0.027//pra luz fircar normalizada em superficieis planas
+directionalLight.shadow.bias = - 0.004
 
 gui.add(directionalLight, 'intensity').min(0).max(10).step(0.001).name('lightIntensity')
 gui.add(directionalLight.position, 'x').min(- 10).max(10).step(0.001).name('lightX')
@@ -135,6 +151,9 @@ gui.add(directionalLight.position, 'castShadow')
 
 const directionalLightCameraHelper = new THREE.CameraHelper(directionalLight.shadow.camera)
 scene.add(directionalLightCameraHelper)
+
+gui.add(directionalLight.shadow, 'normalBias').min(- 0.05).max(0.05).step(0.001)
+gui.add(directionalLight.shadow, 'bias').min(- 0.05).max(0.05).step(0.001)
 
 /**
  * Sizes
