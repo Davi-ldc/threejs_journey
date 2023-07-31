@@ -38,8 +38,8 @@ const updateAllMaterials = () =>
 gui.add(global, 'envMapIntensity').min(0).max(10).step(0.001).onChange(()=>{
     updateAllMaterials()
 })
-gui.add(scene, 'backgroundBlurriness').min(0).max(0.3).step(0.0001)
-gui.add(scene, 'backgroundIntensity').min(0).max(10).step(0.01)
+gui.add(scene, 'backgroundBlurriness').min(0).max(0.3).step(0.0001)//o quão borrada está a imagem 
+gui.add(scene, 'backgroundIntensity').min(0).max(10).step(0.01)//intencidade das cores do fundo 
 /**
  * Models
  */
@@ -52,7 +52,7 @@ gltfLoader.load(
     }
 )
 
-// const environmentMap = cubeTextureLoader.load([
+// const environmentMap = cubeTextureLoader.load([//6 imagens, gera um cubo perfeito envolta da cena
 //     '/environmentMaps/0/px.png',
 //     '/environmentMaps/0/nx.png',
 //     '/environmentMaps/0/py.png',
@@ -64,21 +64,21 @@ gltfLoader.load(
 // scene.environment = environmentMap
 
 //hdr (RGBE) equirectangular
-// rgbeLoader.load('/environmentMaps/0/2k.hdr',(envMap)=>{
+// rgbeLoader.load('/environmentMaps/0/2k.hdr',(envMap)=>{//um cubo so que com qualidade maior
 //     envMap.mapping = THREE.EquirectangularReflectionMapping
 //     scene.background = envMap
 //     scene.environment = envMap
 //     console.log(envMap)
 // })
 
-// const environmentMap = textureLoader.load('/2.jpg')
+// const environmentMap = textureLoader.load('/2.jpg')//msm coisa do de cima so que com imgs jpg (poderia ser png, jpeg...)
 // environmentMap.mapping = THREE.EquirectangularReflectionMapping
 // environmentMap.colorSpace = THREE.SRGBColorSpace
 
 // scene.background = environmentMap
 // scene.environment = environmentMap
 
-// textureLoader.load('/4.jpg', (environmentMap) =>
+// textureLoader.load('/4.jpg', (environmentMap) =>//gera um esfera e vc fica dentro dela. Muito bom pra quando vc quer que o objeto fique em cima do fundo
 // {
 //     environmentMap.mapping = THREE.EquirectangularReflectionMapping
 //     scene.environment = environmentMap
@@ -102,8 +102,8 @@ const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(
         type: THREE.HalfFloatType
     }
 )
-const cubeCamera = new THREE.CubeCamera(0.1, 100, cubeRenderTarget)
-cubeCamera.layers.set(1)
+const cubeCamera = new THREE.CubeCamera(0.1, 100, cubeRenderTarget)//um camera só pra o fundo/reflexões dele nos objetos
+cubeCamera.layers.set(1)//por padrão agnt ta refletindo a cena toda nos objetos então num cubo por exemplo vai dar pra ver o reflexo dele mesmo. Pra resolver isso setamos a visão da camera para layer1. Dessa forma ele n ve ele mesmo. E pra continuar vendo o torus vamos setar ele como enalbel(1) pq ai ele é visto pela camera normal e pela camera da reflexão. Se agnt usar set n vemos mais ele na cena, so sua reflexão
 scene.environment = cubeRenderTarget.texture
 
 /**
