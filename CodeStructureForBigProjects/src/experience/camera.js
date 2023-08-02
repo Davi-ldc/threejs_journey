@@ -24,6 +24,7 @@ export default class Camera extends EventEmitter
             100
             )
         this.scene.add(this.camera)
+        this.camera.position.set(0,1,0)
     }
 
     createControls(){
@@ -37,6 +38,7 @@ export default class Camera extends EventEmitter
     }
 
     update(){
-        this.controls.update
+        this.controls.update()
+        console.log(this.camera.position)
     }
 }
