@@ -6,6 +6,7 @@ import { gsap } from 'gsap'
 /**
  * Loaders
  */
+let sceneReady = false
 const loadingBarElement = document.querySelector('.loading-bar')
 const loadingManager = new THREE.LoadingManager(
     // Loaded
@@ -21,6 +22,10 @@ const loadingManager = new THREE.LoadingManager(
             loadingBarElement.classList.add('ended')
             loadingBarElement.style.transform = ''
         }, 500)
+
+        window.setTimeout(()=>{
+            sceneReady = true
+        }, 2000)
     },
 
     // Progress
@@ -115,6 +120,7 @@ debugObject.envMapIntensity = 3
 /**
  * Models
  */
+let model
 gltfLoader.load(
     '/models/DamagedHelmet/glTF/DamagedHelmet.gltf',
     (gltf) =>
@@ -122,11 +128,30 @@ gltfLoader.load(
         gltf.scene.scale.set(2.5, 2.5, 2.5)
         gltf.scene.rotation.y = Math.PI * 0.5
         scene.add(gltf.scene)
+        model = gltf
 
         updateAllMaterials()
     }
 )
 
+//points
+const points = [
+    {
+        position: new THREE.Vector3(1.55, 0.3, - 0.6),
+        element: document.querySelector('.point-0')
+    },
+    {
+        position: new THREE.Vector3(0.5, 0.8, - 1.6),
+        element: document.querySelector('.point-1')
+    },
+    {
+        position: new THREE.Vector3(1.6, - 1.3, - 0.7),
+        element: document.querySelector('.point-2')
+    },]
+
+
+
+const raycaster = new THREE.Raycaster()
 /**
  * Lights
  */
@@ -195,6 +220,38 @@ const tick = () =>
 {
     // Update controls
     controls.update()
+    
+    if(sceneReady){
+        for (const point of points){
+            const posição2d = point.position.clone()//posição do threejs em 2d(na tela)
+            posição2d.project(camera)
+
+            raycaster.setFromCamera(posição2d, camera)
+            const intersect = raycaster.intersectObjects(scene.children, true)
+
+            if (intersect.length === 0){
+                point.element.classList.add('visible')
+            }
+            else{
+                const distance = intersect[0].distance//vamo comprar a distancia do raycaster pro ponto, se a do ponto for maior então ele está atraz do modelo
+                const pointDistance = point.position.distanceTo(camera.position)
+
+                if(distance<pointDistance){
+                    point.element.classList.remove('visible')
+                }
+                
+
+            }
+
+            const translateX = posição2d.x * sizes.width * 0.5
+            const translateY = -posição2d.y * sizes.height * 0.5
+
+            point.element.style.transform = `translateX(${translateX}px)`
+            point.element.style.transform = `translateY(${translateY}px)`
+
+
+        }
+    }
 
     // Render
     renderer.render(scene, camera)
